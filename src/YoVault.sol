@@ -141,6 +141,7 @@ contract YoVault is ERC4626Upgradeable, Compatible, IYoVault, AuthUpgradeable, P
     /// @return The ID of the request which is always 0 or the assets amount if the request is immediately
     /// processed.
     function requestRedeem(uint256 shares, address receiver, address owner) public whenNotPaused returns (uint256) {
+        require(receiver != address(0), Errors.ZeroReceiver());
         require(shares > 0, Errors.SharesAmountZero());
         require(owner == msg.sender, Errors.NotSharesOwner());
         require(balanceOf(owner) >= shares, Errors.InsufficientShares());
