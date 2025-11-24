@@ -36,6 +36,9 @@ library Errors {
 
     error UseOnSharePriceUpdate();
 
+    /// @notice Thrown when the receiver is zero
+    error ZeroReceiver();
+
     /// @notice Thrown when msg.sender is not the vault
     error Escrow__OnlyVault();
 
