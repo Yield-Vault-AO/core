@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.28;
 
-/// @title IyoVault
-/// @notice Interface for the YO vault part of the YO protocol
-interface IYoVault {
+/// @title IyaoVault
+/// @notice Interface for the YAO vault part of the YAO protocol
+interface IYaoVault {
     struct PendingRedeem {
         uint256 assets;
         uint256 shares;
@@ -41,7 +41,11 @@ interface IYoVault {
     /// @param shares The shares amount
     /// @param instant The instant status
     event RedeemRequest(
-        address indexed receiver, address indexed owner, uint256 assets, uint256 shares, bool indexed instant
+        address indexed receiver,
+        address indexed owner,
+        uint256 assets,
+        uint256 shares,
+        bool indexed instant
     );
 
     /// @notice Emitted when a redeem request is fulfilled

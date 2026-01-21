@@ -2,12 +2,12 @@
 pragma solidity >=0.8.28 <0.9.0;
 
 import "forge-std/Script.sol";
-import { YoVault } from "src/YoVault.sol";
-import { RolesAuthority } from "@solmate/auth/authorities/RolesAuthority.sol";
-import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import { TransparentUpgradeableProxy } from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
+import {YaoVault} from "src/YaoVault.sol";
+import {RolesAuthority} from "@solmate/auth/authorities/RolesAuthority.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {TransparentUpgradeableProxy} from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 
-import { BaseScript } from "./Base.s.sol";
+import {BaseScript} from "./Base.s.sol";
 
 contract Deploy is BaseScript {
     function run(
@@ -19,11 +19,7 @@ contract Deploy is BaseScript {
         address _vault,
         uint256 _depositAmount,
         bool _pause
-    )
-        public
-        broadcast
-        returns (YoVault vault, RolesAuthority authority)
-    {
+    ) public broadcast returns (YaoVault vault, RolesAuthority authority) {
         console.log("Deploying vault...");
         console.log("Name: ", _name);
         console.log("Symbol: ", _symbol);
@@ -44,12 +40,12 @@ contract Deploy is BaseScript {
             authority = RolesAuthority(_authority);
         }
 
-        YoVault impl;
+        YaoVault impl;
         if (_vault == address(0)) {
-            impl = new YoVault();
+            impl = new YaoVault();
             console.log("yoVault implementation deployed at: ", address(impl));
         } else {
-            impl = YoVault(payable(_vault));
+            impl = YaoVault(payable(_vault));
         }
         console.log("yoVault implementation deployed at: ", address(impl));
 
@@ -57,7 +53,7 @@ contract Deploy is BaseScript {
 
         TransparentUpgradeableProxy proxy = new TransparentUpgradeableProxy(address(impl), _owner, data);
 
-        vault = YoVault(payable(address(proxy)));
+        vault = YaoVault(payable(address(proxy)));
         console.log("yoVault proxy deployed at: ", address(vault));
 
         vault.setAuthority(authority);

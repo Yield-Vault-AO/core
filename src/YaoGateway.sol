@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.28;
 
-import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import { IERC4626 } from "@openzeppelin/contracts/interfaces/IERC4626.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 
-import { ReentrancyGuardUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 
-import { Errors } from "./libraries/Errors.sol";
-import { IYoVault } from "./interfaces/IYoVault.sol";
-import { IYoGateway } from "./interfaces/IYoGateway.sol";
-import { IYoRegistry } from "./interfaces/IYoRegistry.sol";
+import {Errors} from "./libraries/Errors.sol";
+import {IYaoVault} from "./interfaces/IYaoVault.sol";
+import {IYaoGateway} from "./interfaces/IYaoGateway.sol";
+import {IYaoRegistry} from "./interfaces/IYaoRegistry.sol";
 
 /// __     __    _____       _
 /// \ \   / /   / ____|     | |
@@ -20,21 +20,21 @@ import { IYoRegistry } from "./interfaces/IYoRegistry.sol";
 ///    |_|\___/ \_____|\__,_|\__\___| \_/\_/ \__,_|\__, |
 ///                                                 __/ |
 ///                                                |___/
-/// @title YoGateway
-/// @notice Single entrypoint for deposits and redemption requests across allow-listed YO ERC-4626 vaults.
+/// @title YaoGateway
+/// @notice Single entrypoint for deposits and redemption requests across allow-listed YAO ERC-4626 vaults.
 ///         - deposit(assets→shares) and redeem(shares→assets).
 ///         - Emits partnerId for attribution; does NOT manage partner registries or fees.
-///         - Uses YoRegistry to manage allow-listed vaults.
+///         - Uses YaoRegistry to manage allow-listed vaults.
 ///
 /// Assumptions:
 ///  - redeem may be async (returns 0 when routed to the vault's requestRedeem). Gateway is oblivious; assets are
 /// delivered by the vault.
 ///  - For third-party redemption (owner != sender), owner must approve the gateway to transfer shares.
 
-contract YoGateway is ReentrancyGuardUpgradeable, IYoGateway {
+contract YaoGateway is ReentrancyGuardUpgradeable, IYaoGateway {
     using SafeERC20 for IERC20;
 
-    IYoRegistry public registry;
+    IYaoRegistry public registry;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -42,7 +42,7 @@ contract YoGateway is ReentrancyGuardUpgradeable, IYoGateway {
     }
 
     function initialize(address _registry) public initializer {
-        registry = IYoRegistry(_registry);
+        registry = IYaoRegistry(_registry);
     }
 
     function deposit(
@@ -51,14 +51,10 @@ contract YoGateway is ReentrancyGuardUpgradeable, IYoGateway {
         uint256 minSharesOut,
         address receiver,
         uint32 partnerId
-    )
-        external
-        nonReentrant
-        returns (uint256 sharesOut)
-    {
+    ) external nonReentrant returns (uint256 sharesOut) {
         require(assets > 0, Errors.Gateway__ZeroAmount());
         require(receiver != address(0), Errors.Gateway__ZeroReceiver());
-        require(registry.isYoVault(yoVault), Errors.Gateway__VaultNotAllowed());
+        require(registry.isYaoVault(yoVault), Errors.Gateway__VaultNotAllowed());
 
         address asset = IERC4626(yoVault).asset();
         IERC20(asset).safeTransferFrom(msg.sender, address(this), assets);
@@ -70,7 +66,7 @@ contract YoGateway is ReentrancyGuardUpgradeable, IYoGateway {
             revert Errors.Gateway__InsufficientSharesOut(sharesOut, minSharesOut);
         }
 
-        emit YoGatewayDeposit(partnerId, yoVault, msg.sender, receiver, assets, sharesOut);
+        emit YaoGatewayDeposit(partnerId, yoVault, msg.sender, receiver, assets, sharesOut);
     }
 
     function redeem(
@@ -79,17 +75,13 @@ contract YoGateway is ReentrancyGuardUpgradeable, IYoGateway {
         uint256 minAssetsOut,
         address receiver,
         uint32 partnerId
-    )
-        external
-        nonReentrant
-        returns (uint256 assetsOrRequestId)
-    {
+    ) external nonReentrant returns (uint256 assetsOrRequestId) {
         require(shares > 0, Errors.Gateway__ZeroAmount());
         require(receiver != address(0), Errors.Gateway__ZeroReceiver());
-        require(registry.isYoVault(yoVault), Errors.Gateway__VaultNotAllowed());
+        require(registry.isYaoVault(yoVault), Errors.Gateway__VaultNotAllowed());
 
         IERC20(yoVault).safeTransferFrom(msg.sender, address(this), shares);
-        assetsOrRequestId = IYoVault(yoVault).requestRedeem(shares, receiver, address(this));
+        assetsOrRequestId = IYaoVault(yoVault).requestRedeem(shares, receiver, address(this));
 
         bool instant = assetsOrRequestId > 0;
 
@@ -98,38 +90,38 @@ contract YoGateway is ReentrancyGuardUpgradeable, IYoGateway {
             revert Errors.Gateway__InsufficientAssetsOut(assetsOrRequestId, minAssetsOut);
         }
 
-        emit YoGatewayRedeem(partnerId, yoVault, receiver, shares, assetsOrRequestId, instant);
+        emit YaoGatewayRedeem(partnerId, yoVault, receiver, shares, assetsOrRequestId, instant);
     }
 
     function quoteConvertToShares(address yoVault, uint256 assets) external view returns (uint256) {
-        require(registry.isYoVault(yoVault), Errors.Gateway__VaultNotAllowed());
+        require(registry.isYaoVault(yoVault), Errors.Gateway__VaultNotAllowed());
         return IERC4626(yoVault).convertToShares(assets);
     }
 
     function quoteConvertToAssets(address yoVault, uint256 shares) external view returns (uint256) {
-        require(registry.isYoVault(yoVault), Errors.Gateway__VaultNotAllowed());
+        require(registry.isYaoVault(yoVault), Errors.Gateway__VaultNotAllowed());
         return IERC4626(yoVault).convertToAssets(shares);
     }
 
     function quotePreviewDeposit(address yoVault, uint256 assets) external view returns (uint256) {
-        require(registry.isYoVault(yoVault), Errors.Gateway__VaultNotAllowed());
+        require(registry.isYaoVault(yoVault), Errors.Gateway__VaultNotAllowed());
         return IERC4626(yoVault).previewDeposit(assets);
     }
 
     function quotePreviewRedeem(address yoVault, uint256 shares) external view returns (uint256) {
-        require(registry.isYoVault(yoVault), Errors.Gateway__VaultNotAllowed());
+        require(registry.isYaoVault(yoVault), Errors.Gateway__VaultNotAllowed());
         return IERC4626(yoVault).previewRedeem(shares);
     }
 
     /// @notice Returns the current allowance of `owner` for shares of the given yoVault to this gateway.
     function getShareAllowance(address yoVault, address owner) external view returns (uint256) {
-        require(registry.isYoVault(yoVault), Errors.Gateway__VaultNotAllowed());
+        require(registry.isYaoVault(yoVault), Errors.Gateway__VaultNotAllowed());
         return IERC20(yoVault).allowance(owner, address(this));
     }
 
     /// @notice Returns the current allowance of `owner` for the underlying asset of the given yoVault to this gateway.
     function getAssetAllowance(address yoVault, address owner) external view returns (uint256) {
-        require(registry.isYoVault(yoVault), Errors.Gateway__VaultNotAllowed());
+        require(registry.isYaoVault(yoVault), Errors.Gateway__VaultNotAllowed());
         address asset = IERC4626(yoVault).asset();
         return IERC20(asset).allowance(owner, address(this));
     }

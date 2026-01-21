@@ -2,7 +2,7 @@
 pragma solidity 0.8.28;
 
 import {Errors} from "./libraries/Errors.sol";
-import {IYoVault} from "./interfaces/IYoVault.sol";
+import {IYaoVault} from "./interfaces/IYaoVault.sol";
 
 import {Compatible} from "./base/Compatible.sol";
 import {AuthUpgradeable, Authority} from "./base/AuthUpgradeable.sol";
@@ -19,7 +19,7 @@ import {PausableUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/Pau
 //  \ V / _ \| |_) | '__/ _ \| __/ _ \ / __/ _ \| |
 //   | | (_) |  __/| | | (_) | || (_) | (_| (_) | |
 //   |_|\___/|_|   |_|  \___/ \__\___/ \___\___/|_|
-/// @title yoVault - A simple vault contract that allows for an operator to manage the vault.
+/// @title yaoVault - A simple vault contract that allows for an operator to manage the vault.
 /// @dev This contract is based on the ERC4626 standard and uses the Auth contract for access control.
 /// It provides an asynchronous redeem mechanism that allows users to request a redeem and the operator to fulfill it.
 /// This would allow the operator to move funds to a different chain or strategy before the user can claim the assets.
@@ -27,7 +27,7 @@ import {PausableUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/Pau
 /// immediately. Otherwise, the assets are transferred to the vault and the request is stored until the operator
 /// fulfills it.
 
-contract YoVault is ERC4626Upgradeable, Compatible, IYoVault, AuthUpgradeable, PausableUpgradeable {
+contract YaoVault is ERC4626Upgradeable, Compatible, IYaoVault, AuthUpgradeable, PausableUpgradeable {
     using Math for uint256;
     using Address for address;
     using SafeERC20 for IERC20;

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.28;
 
-interface IYoGateway {
+interface IYaoGateway {
     // ========= Events =========
-    event YoGatewayDeposit(
+    event YaoGatewayDeposit(
         uint32 indexed partnerId,
         address indexed yoVault,
         address indexed sender,
@@ -12,7 +12,7 @@ interface IYoGateway {
         uint256 shares
     );
 
-    event YoGatewayRedeem(
+    event YaoGatewayRedeem(
         uint32 indexed partnerId,
         address indexed yoVault,
         address indexed receiver,

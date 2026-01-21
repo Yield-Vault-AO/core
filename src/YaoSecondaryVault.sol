@@ -5,14 +5,14 @@ import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 
 import {Errors} from "./libraries/Errors.sol";
 
-import {YoVault} from "./YoVault.sol";
+import {YaoVault} from "./YaoVault.sol";
 
 // __   __    ____            _                  _
 // \ \ / /__ |  _ \ _ __ ___ | |_ ___   ___ ___ | |
 //  \ V / _ \| |_) | '__/ _ \| __/ _ \ / __/ _ \| |
 //   | | (_) |  __/| | | (_) | || (_) | (_| (_) | |
 //   |_|\___/|_|   |_|  \___/ \__\___/ \___\___/|_|
-contract YoSecondaryVault is YoVault {
+contract YaoSecondaryVault is YaoVault {
     using Math for uint256;
 
     event SharePriceUpdated(uint256 lastSharePrice, uint256 newSharePrice);

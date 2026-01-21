@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.28;
 
-import { IERC4626 } from "@openzeppelin/contracts/interfaces/IERC4626.sol";
-import { EnumerableSet } from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
+import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
-import { Errors } from "./libraries/Errors.sol";
-import { IYoRegistry } from "./interfaces/IYoRegistry.sol";
-import { Authority, AuthUpgradeable } from "./base/AuthUpgradeable.sol";
+import {Errors} from "./libraries/Errors.sol";
+import {IYaoRegistry} from "./interfaces/IYaoRegistry.sol";
+import {Authority, AuthUpgradeable} from "./base/AuthUpgradeable.sol";
 
 // __     __   _____            _     _
 // \ \   / /  |  __ \          (_)   | |
@@ -16,9 +16,9 @@ import { Authority, AuthUpgradeable } from "./base/AuthUpgradeable.sol";
 //    |_|\___/|_|  \_\___|\__, |_|___/\__|_|   \__, |
 //                         __/ |                __/ |
 //                        |___/                |___/
-/// @title YoRegistry - A registry for YO vaults
-/// @dev This contract is used to register and unregister YO vaults
-contract YoRegistry is AuthUpgradeable, IYoRegistry {
+/// @title YaoRegistry - A registry for YAO vaults
+/// @dev This contract is used to register and unregister YAO vaults
+contract YaoRegistry is AuthUpgradeable, IYaoRegistry {
     using EnumerableSet for EnumerableSet.AddressSet;
 
     EnumerableSet.AddressSet private _vaults;
@@ -32,8 +32,8 @@ contract YoRegistry is AuthUpgradeable, IYoRegistry {
         __Auth_init(_owner, _authority);
     }
 
-    /// @inheritdoc IYoRegistry
-    function addYoVault(address vaultAddress) external requiresAuth {
+    /// @inheritdoc IYaoRegistry
+    function addYaoVault(address vaultAddress) external requiresAuth {
         if (vaultAddress == address(0)) {
             revert Errors.Registry__VaultAddressZero();
         }
@@ -45,11 +45,11 @@ contract YoRegistry is AuthUpgradeable, IYoRegistry {
             revert Errors.Registry__VaultAlreadyExists(vaultAddress);
         }
 
-        emit YoVaultAdded(asset, vaultAddress);
+        emit YaoVaultAdded(asset, vaultAddress);
     }
 
-    /// @inheritdoc IYoRegistry
-    function removeYoVault(address vaultAddress) external requiresAuth {
+    /// @inheritdoc IYaoRegistry
+    function removeYaoVault(address vaultAddress) external requiresAuth {
         if (vaultAddress == address(0)) {
             revert Errors.Registry__VaultAddressZero();
         }
@@ -61,16 +61,16 @@ contract YoRegistry is AuthUpgradeable, IYoRegistry {
         IERC4626 vault = IERC4626(vaultAddress);
         address asset = vault.asset();
 
-        emit YoVaultRemoved(asset, vaultAddress);
+        emit YaoVaultRemoved(asset, vaultAddress);
     }
 
-    /// @inheritdoc IYoRegistry
-    function isYoVault(address vaultAddress) external view override returns (bool) {
+    /// @inheritdoc IYaoRegistry
+    function isYaoVault(address vaultAddress) external view override returns (bool) {
         return _vaults.contains(vaultAddress);
     }
 
-    /// @inheritdoc IYoRegistry
-    function listYoVaults() external view returns (address[] memory) {
+    /// @inheritdoc IYaoRegistry
+    function listYaoVaults() external view returns (address[] memory) {
         return _vaults.values();
     }
 }
