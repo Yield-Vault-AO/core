@@ -23,11 +23,11 @@ fuzz = { runs = 10_000 }
 verbosity = 4
 
 [etherscan]
-unichain = { key = "DPV3QUAJW29V316Z2HYHU2Y2HZY3V4B422", url = "https://api.uniscan.xyz/api", chain = "130" }
+# unichain = { key = "DPV3QUAJW29V316Z2HYHU2Y2HZY3V4B422", url = "https://api.uniscan.xyz/api", chain = "130" }
 # mainnet = { key = "${API_KEY_ETHERSCAN}" }
 # base = { key = "${API_KEY_ETHERSCAN_BASE}" }
 # arbitrum = { key = "${API_KEY_ETHERSCAN_ARBITRUM}" }
-flare = { key = "${API_KEY_FLARESCAN}", url = "https://api.flarescan.com/api", chain = "14" }
+flare = { key = "${API_KEY_FLARESCAN}", url = "https://api.routescan.io/v2/network/mainnet/evm/14/etherscan/api", chain = "14" }
 
 [fmt]
 bracket_spacing = true
