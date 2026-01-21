@@ -4,16 +4,16 @@ pragma solidity 0.8.28;
 import { TransparentUpgradeableProxy } from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 
 import { Registry_Base_Test } from "./Base.t.sol";
-import { YoRegistry } from "src/YoRegistry.sol";
+import { YaoRegistry } from "src/YaoRegistry.sol";
 import { MockAuthority } from "../../mocks/MockAuthority.sol";
 import { Authority } from "src/base/AuthUpgradeable.sol";
 
 contract Initialize_Test is Registry_Base_Test {
-    YoRegistry internal registryImpl;
+    YaoRegistry internal registryImpl;
 
     function setUp() public override {
         super.setUp();
-        registryImpl = new YoRegistry();
+        registryImpl = new YaoRegistry();
     }
 
     // ========================================= SUCCESS TESTS =========================================
@@ -22,13 +22,13 @@ contract Initialize_Test is Registry_Base_Test {
         address owner = makeAddr("Owner");
         Authority authority = new MockAuthority(owner, Authority(address(0)));
 
-        YoRegistry newRegistry = new YoRegistry();
+        YaoRegistry newRegistry = new YaoRegistry();
 
-        bytes memory data = abi.encodeWithSelector(YoRegistry.initialize.selector, owner, authority);
+        bytes memory data = abi.encodeWithSelector(YaoRegistry.initialize.selector, owner, authority);
 
         TransparentUpgradeableProxy proxy = new TransparentUpgradeableProxy(address(newRegistry), owner, data);
 
-        YoRegistry registryInstance = YoRegistry(payable(address(proxy)));
+        YaoRegistry registryInstance = YaoRegistry(payable(address(proxy)));
 
         // Check that the registry is properly initialized
         assertEq(registryInstance.owner(), owner, "Owner should be set correctly");
@@ -39,13 +39,13 @@ contract Initialize_Test is Registry_Base_Test {
         address owner = makeAddr("Owner");
         Authority authority = new MockAuthority(owner, Authority(address(0)));
 
-        YoRegistry newRegistry = new YoRegistry();
+        YaoRegistry newRegistry = new YaoRegistry();
 
-        bytes memory data = abi.encodeWithSelector(YoRegistry.initialize.selector, owner, authority);
+        bytes memory data = abi.encodeWithSelector(YaoRegistry.initialize.selector, owner, authority);
 
         TransparentUpgradeableProxy proxy = new TransparentUpgradeableProxy(address(newRegistry), owner, data);
 
-        YoRegistry registryInstance = YoRegistry(payable(address(proxy)));
+        YaoRegistry registryInstance = YaoRegistry(payable(address(proxy)));
 
         // Try to initialize again
         vm.expectRevert();
@@ -54,42 +54,42 @@ contract Initialize_Test is Registry_Base_Test {
 
     // ========================================= AUTHORIZATION TESTS =========================================
 
-    function test_addYoVault_RequiresAuth() public {
+    function test_addYaoVault_RequiresAuth() public {
         address mockAsset = makeAddr("MockAsset");
         address mockVault = createMockVault(mockAsset);
 
         // Try to add vault without authorization
         vm.startPrank({ msgSender: users.bob });
         vm.expectRevert();
-        registry.addYoVault(mockVault);
+        registry.addYaoVault(mockVault);
         vm.stopPrank();
 
         // Add vault with authorization
         vm.startPrank({ msgSender: users.admin });
-        registry.addYoVault(mockVault);
-        assertTrue(registry.isYoVault(mockVault), "Vault should be registered");
+        registry.addYaoVault(mockVault);
+        assertTrue(registry.isYaoVault(mockVault), "Vault should be registered");
         vm.stopPrank();
     }
 
-    function test_removeYoVault_RequiresAuth() public {
+    function test_removeYaoVault_RequiresAuth() public {
         address mockAsset = makeAddr("MockAsset");
         address mockVault = createMockVault(mockAsset);
 
         // Add vault first
         vm.startPrank({ msgSender: users.admin });
-        registry.addYoVault(mockVault);
+        registry.addYaoVault(mockVault);
         vm.stopPrank();
 
         // Try to remove vault without authorization
         vm.startPrank({ msgSender: users.bob });
         vm.expectRevert();
-        registry.removeYoVault(mockVault);
+        registry.removeYaoVault(mockVault);
         vm.stopPrank();
 
         // Remove vault with authorization
         vm.startPrank({ msgSender: users.admin });
-        registry.removeYoVault(mockVault);
-        assertFalse(registry.isYoVault(mockVault), "Vault should not be registered");
+        registry.removeYaoVault(mockVault);
+        assertFalse(registry.isYaoVault(mockVault), "Vault should not be registered");
         vm.stopPrank();
     }
 
@@ -99,18 +99,18 @@ contract Initialize_Test is Registry_Base_Test {
 
         // Add vault first
         vm.startPrank({ msgSender: users.admin });
-        registry.addYoVault(mockVault);
+        registry.addYaoVault(mockVault);
         vm.stopPrank();
 
         // Test that view functions don't require auth
         vm.startPrank({ msgSender: users.bob });
 
-        // isYoVault should work
-        assertTrue(registry.isYoVault(mockVault), "isYoVault should work without auth");
+        // isYaoVault should work
+        assertTrue(registry.isYaoVault(mockVault), "isYaoVault should work without auth");
 
-        // listYoVaults should work
-        address[] memory vaults = registry.listYoVaults();
-        assertEq(vaults.length, 1, "listYoVaults should work without auth");
+        // listYaoVaults should work
+        address[] memory vaults = registry.listYaoVaults();
+        assertEq(vaults.length, 1, "listYaoVaults should work without auth");
         assertEq(vaults[0], mockVault, "Vault should be in list");
 
         vm.stopPrank();
@@ -120,7 +120,7 @@ contract Initialize_Test is Registry_Base_Test {
 
     function test_constructor_DisablesInitializers() public {
         // The constructor should disable initializers
-        YoRegistry newRegistry = new YoRegistry();
+        YaoRegistry newRegistry = new YaoRegistry();
 
         // Try to initialize directly (should fail)
         vm.expectRevert();
@@ -134,18 +134,18 @@ contract Initialize_Test is Registry_Base_Test {
         // Only admin should be able to add vaults
         vm.startPrank({ msgSender: users.bob });
         vm.expectRevert();
-        registry.addYoVault(mockVault);
+        registry.addYaoVault(mockVault);
         vm.stopPrank();
 
         vm.startPrank({ msgSender: users.alice });
         vm.expectRevert();
-        registry.addYoVault(mockVault);
+        registry.addYaoVault(mockVault);
         vm.stopPrank();
 
         // Admin should be able to add vaults
         vm.startPrank({ msgSender: users.admin });
-        registry.addYoVault(mockVault);
-        assertTrue(registry.isYoVault(mockVault), "Admin should be able to add vaults");
+        registry.addYaoVault(mockVault);
+        assertTrue(registry.isYaoVault(mockVault), "Admin should be able to add vaults");
         vm.stopPrank();
     }
 }

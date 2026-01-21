@@ -14,11 +14,11 @@ import { Events } from "../../utils/Events.sol";
 import { Constants } from "../../utils/Constants.sol";
 import { MockAuthority } from "../../mocks/MockAuthority.sol";
 
-import { YoGateway } from "src/YoGateway.sol";
-import { YoVault } from "src/YoVault.sol";
-import { YoRegistry } from "src/YoRegistry.sol";
+import { YaoGateway } from "src/YaoGateway.sol";
+import { YaoVault } from "src/YaoVault.sol";
+import { YaoRegistry } from "src/YaoRegistry.sol";
 
-/// @notice Base test contract with common logic needed by all YoGateway tests.
+/// @notice Base test contract with common logic needed by all YaoGateway tests.
 
 abstract contract Gateway_Base_Test is Test, Events, Utils, Constants {
     using Math for uint256;
@@ -28,10 +28,10 @@ abstract contract Gateway_Base_Test is Test, Events, Utils, Constants {
 
     // ====================================== TEST CONTRACTS =======================================
     IERC20 internal usdc;
-    YoVault internal yoVault;
-    YoGateway internal gateway;
+    YaoVault internal yoVault;
+    YaoGateway internal gateway;
     Authority internal authority;
-    YoRegistry internal registry;
+    YaoRegistry internal registry;
 
     // Dummy address for testing unregistered vaults
     address internal constant DUMMY_VAULT = address(0x1234567890123456789012345678901234567890);
@@ -46,8 +46,8 @@ abstract contract Gateway_Base_Test is Test, Events, Utils, Constants {
         // USDC (https://basescan.org/token/0x833589fcd6edb6e08f4c7c32d4f71b54bda02913)
         usdc = IERC20(0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913);
 
-        // Use existing YoVault deployment
-        yoVault = YoVault(payable(0x0000000f2eB9f69274678c76222B35eEc7588a65));
+        // Use existing YaoVault deployment
+        yoVault = YaoVault(payable(0x0000000f2eB9f69274678c76222B35eEc7588a65));
 
         // Label the base test contracts.
         vm.label({ account: address(usdc), newLabel: "USDC" });
@@ -86,18 +86,18 @@ abstract contract Gateway_Base_Test is Test, Events, Utils, Constants {
 
     /// @dev Deploys all the necessary contracts
     function deployContracts() internal {
-        // Deploy YoRegistry
-        YoRegistry registryImpl = new YoRegistry();
+        // Deploy YaoRegistry
+        YaoRegistry registryImpl = new YaoRegistry();
         bytes memory registryData =
-            abi.encodeWithSelector(YoRegistry.initialize.selector, users.admin, Authority(address(0)));
+            abi.encodeWithSelector(YaoRegistry.initialize.selector, users.admin, Authority(address(0)));
         TransparentUpgradeableProxy registryProxy =
             new TransparentUpgradeableProxy(address(registryImpl), users.admin, registryData);
-        registry = YoRegistry(payable(address(registryProxy)));
+        registry = YaoRegistry(payable(address(registryProxy)));
 
-        // Deploy YoGateway
-        YoGateway gatewayImpl = new YoGateway();
-        bytes memory data = abi.encodeWithSelector(YoGateway.initialize.selector, address(registry));
-        gateway = YoGateway(payable(new TransparentUpgradeableProxy(address(gatewayImpl), users.admin, data)));
+        // Deploy YaoGateway
+        YaoGateway gatewayImpl = new YaoGateway();
+        bytes memory data = abi.encodeWithSelector(YaoGateway.initialize.selector, address(registry));
+        gateway = YaoGateway(payable(new TransparentUpgradeableProxy(address(gatewayImpl), users.admin, data)));
 
         // Set up authority for registry
         authority = new MockAuthority(users.admin, Authority(address(0)));
@@ -106,10 +106,10 @@ abstract contract Gateway_Base_Test is Test, Events, Utils, Constants {
         MockAuthority(address(authority)).setUserRole(users.admin, ADMIN_ROLE, true);
 
         // Add the existing vault to the registry
-        registry.addYoVault(address(yoVault));
+        registry.addYaoVault(address(yoVault));
 
         // Label the contracts
-        vm.label({ account: address(gateway), newLabel: "YoGateway" });
-        vm.label({ account: address(registry), newLabel: "YoRegistry" });
+        vm.label({ account: address(gateway), newLabel: "YaoGateway" });
+        vm.label({ account: address(registry), newLabel: "YaoRegistry" });
     }
 }

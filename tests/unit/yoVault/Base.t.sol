@@ -14,7 +14,7 @@ import { Events } from "../../utils/Events.sol";
 import { Constants } from "../../utils/Constants.sol";
 import { MockAuthority } from "../../mocks/MockAuthority.sol";
 
-import { YoVault } from "src/YoVault.sol";
+import { YaoVault } from "src/YaoVault.sol";
 
 /// @notice Base test contract with common logic needed by all tests.
 
@@ -26,7 +26,7 @@ abstract contract Base_Test is Test, Events, Utils, Constants {
 
     // ====================================== TEST CONTRACTS =======================================
     IERC20 internal usdc;
-    YoVault internal depositVault;
+    YaoVault internal depositVault;
     Authority internal authority;
 
     // ====================================== SET-UP FUNCTION ======================================
@@ -73,13 +73,13 @@ abstract contract Base_Test is Test, Events, Utils, Constants {
 
     /// @dev Deploys the yoVault
     function deployDepositVault() internal {
-        YoVault vault = new YoVault();
+        YaoVault vault = new YaoVault();
 
         bytes memory data =
-            abi.encodeWithSelector(YoVault.initialize.selector, usdc, users.admin, "yoUSDCVault", "yoUSDC");
+            abi.encodeWithSelector(YaoVault.initialize.selector, usdc, users.admin, "yoUSDCVault", "yoUSDC");
 
         TransparentUpgradeableProxy proxy = new TransparentUpgradeableProxy(address(vault), users.admin, data);
-        depositVault = YoVault(payable(address(proxy)));
+        depositVault = YaoVault(payable(address(proxy)));
 
         authority = new MockAuthority(users.admin, Authority(address(0)));
         depositVault.setAuthority({ newAuthority: authority });

@@ -24,11 +24,10 @@ verbosity = 4
 
 [etherscan]
 unichain = { key = "DPV3QUAJW29V316Z2HYHU2Y2HZY3V4B422", url = "https://api.uniscan.xyz/api", chain = "130" }
-
-
 mainnet = { key = "${API_KEY_ETHERSCAN}" }
 base = { key = "${API_KEY_ETHERSCAN_BASE}" }
 arbitrum = { key = "${API_KEY_ETHERSCAN_ARBITRUM}" }
+flare = { key = "${API_KEY_FLARESCAN}", url = "https://api.flarescan.com/api", chain = "14" }
 
 [fmt]
 bracket_spacing = true
@@ -52,3 +51,5 @@ mainnet = "https://eth-mainnet.g.alchemy.com/v2/${API_KEY_ALCHEMY}"
 optimism = "https://optimism-rpc.publicnode.com"
 polygon = "https://polygon-bor-rpc.publicnode.com"
 sepolia = "https://ethereum-sepolia-rpc.publicnode.com"
+flare = "https://flare-api.flare.network/ext/C/rpc"
+flare_coston2 = "https://coston2-api.flare.network/ext/C/rpc"

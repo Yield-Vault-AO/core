@@ -2,7 +2,7 @@
 pragma solidity >=0.8.28 <0.9.0;
 
 import "forge-std/Script.sol";
-import { YoVault } from "src/YoVault.sol";
+import { YaoVault } from "src/YaoVault.sol";
 
 import { console } from "forge-std/console.sol";
 
@@ -10,7 +10,7 @@ import { ITransparentUpgradeableProxy } from "@openzeppelin/contracts/proxy/tran
 import { ProxyAdmin } from "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
 import { BaseScript } from "./Base.s.sol";
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
-import { YoGateway } from "src/YoGateway.sol";
+import { YaoGateway } from "src/YaoGateway.sol";
 
 contract Upgrade is BaseScript {
     using Address for address;
@@ -20,7 +20,7 @@ contract Upgrade is BaseScript {
     ProxyAdmin public proxyAdmin = ProxyAdmin(0xB3C902F8fA46d7985efaB885105ae2d7b4976827);
 
     function run() public broadcast {
-        YoGateway gatewayImpl = new YoGateway();
+        YaoGateway gatewayImpl = new YaoGateway();
         proxyAdmin.upgradeAndCall(gateway, address(gatewayImpl), "");
     }
 }

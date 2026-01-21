@@ -3,7 +3,7 @@ pragma solidity 0.8.28;
 
 import { Registry_Base_Test } from "./Base.t.sol";
 
-contract ListYoVaults_Test is Registry_Base_Test {
+contract ListYaoVaults_Test is Registry_Base_Test {
     address internal mockAsset1;
     address internal mockVault1;
     address internal mockAsset2;
@@ -25,36 +25,36 @@ contract ListYoVaults_Test is Registry_Base_Test {
 
     // ========================================= SUCCESS TESTS =========================================
 
-    function test_listYoVaults_EmptyRegistry() public view {
+    function test_listYaoVaults_EmptyRegistry() public view {
         // Check empty registry
-        address[] memory vaults = registry.listYoVaults();
+        address[] memory vaults = registry.listYaoVaults();
         assertEq(vaults.length, 0, "Empty registry should return empty array");
     }
 
-    function test_listYoVaults_SingleVault() public {
+    function test_listYaoVaults_SingleVault() public {
         vm.startPrank({ msgSender: users.admin });
 
         // Add single vault
-        registry.addYoVault(mockVault1);
+        registry.addYaoVault(mockVault1);
 
         // Check list
-        address[] memory vaults = registry.listYoVaults();
+        address[] memory vaults = registry.listYaoVaults();
         assertEq(vaults.length, 1, "Should have 1 vault");
         assertEq(vaults[0], mockVault1, "Vault should be in list");
 
         vm.stopPrank();
     }
 
-    function test_listYoVaults_MultipleVaults() public {
+    function test_listYaoVaults_MultipleVaults() public {
         vm.startPrank({ msgSender: users.admin });
 
         // Add multiple vaults
-        registry.addYoVault(mockVault1);
-        registry.addYoVault(mockVault2);
-        registry.addYoVault(mockVault3);
+        registry.addYaoVault(mockVault1);
+        registry.addYaoVault(mockVault2);
+        registry.addYaoVault(mockVault3);
 
         // Check list
-        address[] memory vaults = registry.listYoVaults();
+        address[] memory vaults = registry.listYaoVaults();
         assertEq(vaults.length, 3, "Should have 3 vaults");
 
         // Check all vaults are in the list (order may vary due to EnumerableSet)
@@ -75,19 +75,19 @@ contract ListYoVaults_Test is Registry_Base_Test {
         vm.stopPrank();
     }
 
-    function test_listYoVaults_AfterRemoval() public {
+    function test_listYaoVaults_AfterRemoval() public {
         vm.startPrank({ msgSender: users.admin });
 
         // Add multiple vaults
-        registry.addYoVault(mockVault1);
-        registry.addYoVault(mockVault2);
-        registry.addYoVault(mockVault3);
+        registry.addYaoVault(mockVault1);
+        registry.addYaoVault(mockVault2);
+        registry.addYaoVault(mockVault3);
 
         // Remove one vault
-        registry.removeYoVault(mockVault2);
+        registry.removeYaoVault(mockVault2);
 
         // Check list
-        address[] memory vaults = registry.listYoVaults();
+        address[] memory vaults = registry.listYaoVaults();
         assertEq(vaults.length, 2, "Should have 2 vaults after removal");
 
         // Check remaining vaults
@@ -108,19 +108,19 @@ contract ListYoVaults_Test is Registry_Base_Test {
         vm.stopPrank();
     }
 
-    function test_listYoVaults_RemoveAll() public {
+    function test_listYaoVaults_RemoveAll() public {
         vm.startPrank({ msgSender: users.admin });
 
         // Add multiple vaults
-        registry.addYoVault(mockVault1);
-        registry.addYoVault(mockVault2);
+        registry.addYaoVault(mockVault1);
+        registry.addYaoVault(mockVault2);
 
         // Remove all vaults
-        registry.removeYoVault(mockVault1);
-        registry.removeYoVault(mockVault2);
+        registry.removeYaoVault(mockVault1);
+        registry.removeYaoVault(mockVault2);
 
         // Check empty list
-        address[] memory vaults = registry.listYoVaults();
+        address[] memory vaults = registry.listYaoVaults();
         assertEq(vaults.length, 0, "Should have 0 vaults after removing all");
 
         vm.stopPrank();
@@ -128,66 +128,66 @@ contract ListYoVaults_Test is Registry_Base_Test {
 
     // ========================================= EDGE CASES =========================================
 
-    function test_listYoVaults_AddRemoveAdd() public {
+    function test_listYaoVaults_AddRemoveAdd() public {
         vm.startPrank({ msgSender: users.admin });
 
         // Add vault
-        registry.addYoVault(mockVault1);
-        address[] memory vaults = registry.listYoVaults();
+        registry.addYaoVault(mockVault1);
+        address[] memory vaults = registry.listYaoVaults();
         assertEq(vaults.length, 1, "Should have 1 vault");
 
         // Remove vault
-        registry.removeYoVault(mockVault1);
-        vaults = registry.listYoVaults();
+        registry.removeYaoVault(mockVault1);
+        vaults = registry.listYaoVaults();
         assertEq(vaults.length, 0, "Should have 0 vaults after removal");
 
         // Add vault again
-        registry.addYoVault(mockVault1);
-        vaults = registry.listYoVaults();
+        registry.addYaoVault(mockVault1);
+        vaults = registry.listYaoVaults();
         assertEq(vaults.length, 1, "Should have 1 vault after re-adding");
         assertEq(vaults[0], mockVault1, "Vault should be in list");
 
         vm.stopPrank();
     }
 
-    function test_listYoVaults_AnyUserCanCall() public {
+    function test_listYaoVaults_AnyUserCanCall() public {
         vm.startPrank({ msgSender: users.admin });
-        registry.addYoVault(mockVault1);
-        registry.addYoVault(mockVault2);
+        registry.addYaoVault(mockVault1);
+        registry.addYaoVault(mockVault2);
         vm.stopPrank();
 
-        // Bob should be able to call listYoVaults
+        // Bob should be able to call listYaoVaults
         vm.startPrank({ msgSender: users.bob });
-        address[] memory vaults = registry.listYoVaults();
+        address[] memory vaults = registry.listYaoVaults();
         assertEq(vaults.length, 2, "Bob should be able to list vaults");
         vm.stopPrank();
 
-        // Alice should be able to call listYoVaults
+        // Alice should be able to call listYaoVaults
         vm.startPrank({ msgSender: users.alice });
-        vaults = registry.listYoVaults();
+        vaults = registry.listYaoVaults();
         assertEq(vaults.length, 2, "Alice should be able to list vaults");
         vm.stopPrank();
     }
 
-    function test_listYoVaults_ConsistencyWithIsYoVault() public {
+    function test_listYaoVaults_ConsistencyWithIsYaoVault() public {
         vm.startPrank({ msgSender: users.admin });
 
         // Add vaults
-        registry.addYoVault(mockVault1);
-        registry.addYoVault(mockVault2);
+        registry.addYaoVault(mockVault1);
+        registry.addYaoVault(mockVault2);
 
         // Check consistency
-        address[] memory vaults = registry.listYoVaults();
+        address[] memory vaults = registry.listYaoVaults();
         assertEq(vaults.length, 2, "Should have 2 vaults");
 
         // Verify each vault in the list is registered
         for (uint256 i = 0; i < vaults.length; i++) {
-            assertTrue(registry.isYoVault(vaults[i]), "Each vault in list should be registered");
+            assertTrue(registry.isYaoVault(vaults[i]), "Each vault in list should be registered");
         }
 
         // Verify registered vaults are in the list
-        assertTrue(registry.isYoVault(mockVault1), "Vault1 should be registered");
-        assertTrue(registry.isYoVault(mockVault2), "Vault2 should be registered");
+        assertTrue(registry.isYaoVault(mockVault1), "Vault1 should be registered");
+        assertTrue(registry.isYaoVault(mockVault2), "Vault2 should be registered");
 
         vm.stopPrank();
     }

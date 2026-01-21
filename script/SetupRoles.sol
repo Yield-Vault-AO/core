@@ -2,12 +2,12 @@
 pragma solidity >=0.8.28 <0.9.0;
 
 import "forge-std/Script.sol";
-import { YoEscrow } from "src/YoEscrow.sol";
+import { YaoEscrow } from "src/YaoEscrow.sol";
 import { IWETH9 } from "src/interfaces/IWETH9.sol";
 import { RolesAuthority } from "@solmate/auth/authorities/RolesAuthority.sol";
 import { BaseScript } from "./Base.s.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import { YoVault } from "src/YoVault.sol";
+import { YaoVault } from "src/YaoVault.sol";
 
 contract Deploy is BaseScript {
     IWETH9 public weth = IWETH9(0x4200000000000000000000000000000000000006);

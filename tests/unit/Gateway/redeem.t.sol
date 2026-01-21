@@ -10,7 +10,7 @@ contract Redeem_Test is Gateway_Base_Test {
     error UserHasNoSharesToRedeem();
 
     // ========================================= EVENTS =========================================
-    event YoGatewayRedeem(
+    event YaoGatewayRedeem(
         uint32 indexed partnerId,
         address indexed yoVault,
         address indexed receiver,
@@ -65,7 +65,7 @@ contract Redeem_Test is Gateway_Base_Test {
         vm.startPrank(users.bob);
 
         vm.expectEmit(true, true, true, true);
-        emit YoGatewayRedeem(
+        emit YaoGatewayRedeem(
             PARTNER_ID,
             address(yoVault),
             users.bob,

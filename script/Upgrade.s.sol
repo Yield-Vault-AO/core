@@ -2,7 +2,7 @@
 pragma solidity >=0.8.28 <0.9.0;
 
 import "forge-std/Script.sol";
-import { YoVault } from "src/YoVault.sol";
+import { YaoVault } from "src/YaoVault.sol";
 
 import { console } from "forge-std/console.sol";
 

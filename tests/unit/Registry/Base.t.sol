@@ -10,15 +10,15 @@ import { Utils } from "../../utils/Utils.sol";
 import { Events } from "../../utils/Events.sol";
 import { Constants } from "../../utils/Constants.sol";
 import { MockAuthority } from "../../mocks/MockAuthority.sol";
-import { YoRegistry } from "src/YoRegistry.sol";
+import { YaoRegistry } from "src/YaoRegistry.sol";
 
-/// @notice Base test contract with common logic needed by all YoRegistry tests.
+/// @notice Base test contract with common logic needed by all YaoRegistry tests.
 abstract contract Registry_Base_Test is Test, Events, Utils, Constants {
     // ========================================= VARIABLES =========================================
     Users internal users;
 
     // ====================================== TEST CONTRACTS =======================================
-    YoRegistry internal registry;
+    YaoRegistry internal registry;
     Authority internal authority;
 
     // ====================================== SET-UP FUNCTION ======================================
@@ -48,21 +48,21 @@ abstract contract Registry_Base_Test is Test, Events, Utils, Constants {
         return (payable(user), key);
     }
 
-    /// @dev Deploys the YoRegistry
+    /// @dev Deploys the YaoRegistry
     function deployRegistry() internal {
-        YoRegistry registryImpl = new YoRegistry();
+        YaoRegistry registryImpl = new YaoRegistry();
 
-        bytes memory data = abi.encodeWithSelector(YoRegistry.initialize.selector, users.admin, Authority(address(0)));
+        bytes memory data = abi.encodeWithSelector(YaoRegistry.initialize.selector, users.admin, Authority(address(0)));
 
         TransparentUpgradeableProxy proxy = new TransparentUpgradeableProxy(address(registryImpl), users.admin, data);
-        registry = YoRegistry(payable(address(proxy)));
+        registry = YaoRegistry(payable(address(proxy)));
 
         authority = new MockAuthority(users.admin, Authority(address(0)));
         registry.setAuthority({ newAuthority: authority });
 
         MockAuthority(address(authority)).setUserRole(users.admin, ADMIN_ROLE, true);
 
-        vm.label({ account: address(registry), newLabel: "YoRegistry" });
+        vm.label({ account: address(registry), newLabel: "YaoRegistry" });
     }
 
     /// @dev Creates a mock ERC4626 vault for testing

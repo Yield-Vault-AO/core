@@ -8,7 +8,7 @@ import { Errors } from "src/libraries/Errors.sol";
 
 contract Deposit_Test is Gateway_Base_Test {
     // ========================================= EVENTS =========================================
-    event YoGatewayDeposit(
+    event YaoGatewayDeposit(
         uint32 indexed partnerId,
         address indexed yoVault,
         address indexed sender,
